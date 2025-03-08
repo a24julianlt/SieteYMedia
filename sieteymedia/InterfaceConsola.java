@@ -5,20 +5,20 @@ import recursos.Carta;
 import java.util.Scanner;
 
 public class InterfaceConsola {
-    // creamos SieteYMedia
-    SieteYMedia juego;
+    SieteYMedia SYM;
 
     // Scanner
     Scanner sc = new Scanner(System.in);
 
+
     public static void main(String[] args) {
-        InterfaceConsola consola = new InterfaceConsola();
+        new InterfaceConsola();
+    }
 
-        // Iniciamos SieteYMedia
-        consola.juego = new SieteYMedia(consola);
-
-        consola.presentarJuego();
-        consola.jugar();
+    public InterfaceConsola() {
+        SYM = new SieteYMedia();
+        presentarJuego();
+        jugar();
     }
 
     void presentarJuego() {
@@ -42,35 +42,76 @@ public class InterfaceConsola {
         System.out.println("\nEmpecemos!!!\n");
     }
 
+
     void jugar() {
-        // turno jugador
-        char opc = 'C';
+        //=========Turno jugador=========\\
 
         // obligamos a que como mínimo se tenga 1 carta
         System.out.println("Como mínimo recibes una carta, luego puedes decidir si seguir o plantarte");
-        juego.turnoJugador(opc);
+        SYM.turnoJugador();
 
-        // turno banca
+        double valor = SYM.valorCartas(SYM.cartasJugador);
+        while (valor < 7.5) {
+
+            // mostramos cartas y su valor, si se pasa se sale del bucle
+            System.out.println("Éstas son tus cartas jugador:");
+            mostrarCartas(SYM.cartasJugador);
+
+            // mostrar valor
+            System.out.println("\n\tValor de cartas: " + valor);
+
+
+            // Pedimos carta
+            // suponemos que el usuario teclea bien !!!
+            System.out.println("\n¿Pides [C]arta o te [P]lantas?");
+            char opc = sc.next().trim().toUpperCase().charAt(0);
+
+            if (opc == 'C') SYM.turnoJugador();
+            else break;
+
+            // actualizamos el valor para poder salir del bucle
+            valor = SYM.valorCartas(SYM.cartasJugador);
+        }
+
+
+        //=========Turno banca=========\\
+
+        // lo primero es consultar el valor que alcanzó el jugador en su turno
+        double valorCartasJugador = SYM.valorCartas(SYM.cartasJugador);
+        if (valorCartasJugador > 7.5) {
+            // Mostramos las cartas si se pasa
+            System.out.println("Éstas son tus cartas jugador:");
+            mostrarCartas(SYM.cartasJugador);
+            System.out.println("\n\tValor de cartas: " + valor);
+
+            System.out.println("Jugador, te has pasado en tu jugada anterior, gana la banca");
+            return;
+        }
+
         System.out.println("\n\nTurno de banca ...");
-        boolean resultadoBanca = juego.turnoBanca();
+        double valorCartasBanca = SYM.valorCartas(SYM.cartasBanca);
+        // juega hasta empatar o superar
+        while (SYM.valorCartas(SYM.cartasBanca) < valorCartasJugador) {
+            SYM.turnoBanca();
+            valorCartasBanca = SYM.valorCartas(SYM.cartasBanca);
+        }
 
-        // resultado
-        if (resultadoBanca) {
+        // Mostrar cartas banca
+        System.out.println("Éstas son mis cartas:");
+        mostrarCartas(SYM.cartasBanca);
+        System.out.println("\nValor de  mis cartas(banca): " + valorCartasBanca);
+
+
+        // Comprobar quién gana
+        if (valorCartasBanca > 7.5) {
             System.out.println("me pasé, ganas tú,jugador");
         } else {
             System.out.println("Gana la banca");
         }
 
+
         // Despedida
         System.out.println("Adios");
-    }
-
-    char pedirCartas() {
-        // suponemos que el usuario teclea bien !!!
-        System.out.println("\n¿Pides [C]arta o te [P]lantas?");
-
-        // Devolvemos la decisión del jugador
-        return sc.next().trim().toUpperCase().charAt(0);
     }
 
 
@@ -80,12 +121,6 @@ public class InterfaceConsola {
             System.out.print("\t" + cartas[i]);
             i++;
         }
-        mostrarValor(cartas);
-    }
-
-    void mostrarValor(Carta[] cartas) {
-        double valor = juego.valorCartas(cartas);
-        System.out.println("\n\tValor de cartas: " + valor);
     }
 
 }

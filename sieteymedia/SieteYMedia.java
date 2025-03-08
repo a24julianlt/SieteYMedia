@@ -4,17 +4,11 @@ import recursos.Baraja;
 import recursos.Carta;
 
 public class SieteYMedia {
-    // Creamos InterfaceConsola
-    InterfaceConsola IC;
-
     Baraja baraja;
     Carta[] cartasJugador;
     Carta[] cartasBanca;
 
-
-    public SieteYMedia(InterfaceConsola IC) {
-        this.IC = IC;
-
+    public SieteYMedia() {
         baraja = new Baraja();
         baraja.barajar();
         // se van pidiendo cartas al jugar pero matemáticamente a partir de 15 siempre
@@ -26,52 +20,21 @@ public class SieteYMedia {
     }
 
 
-    void turnoJugador(char opc) {
-        while (valorCartas(cartasJugador) < 7.5 && opc == 'C') {
-            Carta c = baraja.darCartas(1)[0];
+    void turnoJugador() {
 
-            // insertamos c en las cartas del jugador
-            insertarCartaEnArray(cartasJugador, c);
-
-            // mostramos cartas y su valor, si se pasa se sale del bucle
-            System.out.println("Éstas son tus cartas jugador:");
-            IC.mostrarCartas(cartasJugador);
-
-            if (valorCartas(cartasJugador) < 7.5) {
-                // pedimos cartas
-                opc = IC.pedirCartas();
-            }
-
-        }
+        Carta c = baraja.darCartas(1)[0];
+        // insertamos c en las cartas del jugador
+        insertarCartaEnArray(cartasJugador, c);
 
     }
 
-    Boolean turnoBanca() {
-        // lo primero es consultar el valor que alcanzó el jugador en su turno
-        double valorCartasJugador = valorCartas(cartasJugador);
-        if (valorCartasJugador > 7.5) {
-            System.out.println("Jugador, te has pasado en tu jugada anterior, gana la banca");
-            return false; // gana banca
-        }
+    void turnoBanca() {
 
-        // juega hasta empatar o superar
-        while (valorCartas(cartasBanca) < valorCartasJugador) {
-            Carta c = baraja.darCartas(1)[0];
-            insertarCartaEnArray(cartasBanca, c);
-        }
-        // mostramos cartas
-        System.out.println("Éstas son mis cartas:");
-        IC.mostrarCartas(cartasBanca);
+        Carta c = baraja.darCartas(1)[0];
+        // insertamos c en las cartas dela banca
+        insertarCartaEnArray(cartasBanca, c);
 
-        // comprobamos quien gana
-        if (valorCartas(cartasBanca) > 7.5) {
-            return true; // gana jugador
-        } else {
-            return false; // gana banca
-        }
     }
-
-
 
 
     double valorCartas(Carta[] cartas) {
@@ -96,5 +59,4 @@ public class SieteYMedia {
         cartas[i] = c;
 
     }
-
 }
